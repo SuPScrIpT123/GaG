@@ -1,0 +1,101 @@
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "LoadingScreen"
+screenGui.IgnoreGuiInset = true -- Agar layar penuh
+screenGui.Parent = PlayerGui
+
+local background = Instance.new("Frame")
+background.Name = "Background"
+background.Size = UDim2.new(1, 0, 1, 0)
+background.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+background.BackgroundTransparency = 1
+background.Parent = screenGui
+
+local loadingText = Instance.new("TextLabel")
+loadingText.Name = "LoadingText"
+loadingText.Size = UDim2.new(1, 0, 0.1, 0)
+loadingText.Position = UDim2.new(0, 0, 0.45, 0)
+loadingText.BackgroundTransparency = 1
+loadingText.Text = "Loading"
+loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+loadingText.Font = Enum.Font.GothamBold
+loadingText.TextScaled = true
+loadingText.Parent = background
+
+local progressBarBackground = Instance.new("Frame")
+progressBarBackground.Name = "ProgressBarBackground"
+progressBarBackground.Size = UDim2.new(0.6, 0, 0.05, 0)
+progressBarBackground.Position = UDim2.new(0.2, 0, 0.6, 0)
+progressBarBackground.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+progressBarBackground.BorderSizePixel = 0
+progressBarBackground.Parent = background
+
+local progressBar = Instance.new("Frame")
+progressBar.Name = "ProgressBar"
+progressBar.Size = UDim2.new(0, 0, 1, 0)
+progressBar.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+progressBar.BorderSizePixel = 0
+progressBar.Parent = progressBarBackground
+
+local function animateLoadingText()
+    while screenGui.Parent do
+        for i = 1, 3 do
+            loadingText.Text = "Loading" .. string.rep(".", i)
+            wait(0.5)
+        end
+    end
+end
+
+local function startLoading()
+    task.spawn(animateLoadingText)
+    
+    for i = 1, 100 do
+        progressBar:TweenSize(
+            UDim2.new(i / 100, 0, 1, 0),
+            Enum.EasingDirection.Out,
+            Enum.EasingStyle.Sine,
+            0.05,
+            true
+        )
+        wait(0.05)
+    end
+
+    wait(0.5) 
+    screenGui:TweenSizeAndPosition(
+        UDim2.new(0, 0, 0, 0), -- Menghilangkan loading screen dengan animasi
+        UDim2.new(0.5, 0, 0.5, 0),
+        Enum.EasingDirection.Out,
+        Enum.EasingStyle.Sine,
+        1,
+        true,
+        function()
+            screenGui:Destroy()
+            showMainMenu()
+        end
+    )
+end
+
+function showMainMenu()
+    local Library = loadstring(game:HttpGet("https://pastebin.com/raw/b5QLVFiM"))() -- LIBRARY
+    
+    local Window = Library:CreateWindow('Satr - Hub') -- CREATE WINDOW
+    
+    local Tab = {
+        Tab_1 = Window:addTab('â€¢Home'),
+        Tab_Setting = Window:addTab('â€¢Settings'),
+        Tab_2 = Window:addTab('â€¢Main Farm'),
+        Tab_5 = Window:addTab('â€¢Teleport & Status'),
+        Tab_6 = Window:addTab('â€¢Shop'),
+        Tab_7 = Window:addTab('â€¢Misc')
+    }
+    
+ 
+    Tab.Tab_1:addButton("Start Game", function()
+        print("Game Started!")
+    end)
+end
+
+startLoading()
